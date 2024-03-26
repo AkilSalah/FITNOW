@@ -11,8 +11,12 @@ class progression extends Model
     protected $fillable = [
         'userId',
         'poids',
-        'mensurations',
-        'performanceSportive',
+        'Mollet',
+        'Bras',
+        'TempsDeCourse',
+        'PoidsLeve',
+        'Hauteur',
+        'Poitrine',
         'status',
     ];
 
