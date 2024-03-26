@@ -23,6 +23,10 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function progression(){
+        return $this->hasOne(progression::class,'userId');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
