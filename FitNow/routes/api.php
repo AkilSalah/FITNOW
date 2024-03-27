@@ -31,4 +31,5 @@ Route::post('/register',[AuthController::class,'register']);
 Route::group(['middleware' => ['auth:sanctum']],function(){
 Route::post('/logout',[AuthController::class,'logout']);
 Route::resource('/Progression', ProgressionController::class);
+Route::patch('/Progression/{id}/completed',[ProgressionController::class,'Termine']);
 });

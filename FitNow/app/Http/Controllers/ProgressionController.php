@@ -19,7 +19,7 @@ class ProgressionController extends Controller
     {
         return 
             ProgresssionResource::collection(
-                progression::where('userId', '=', Auth::user()->id)->get()
+                progression::where('userId', '=', Auth::user()->id)->orderBy('created_at' , 'desc')->get()
             );
         
     }
@@ -60,10 +60,13 @@ class ProgressionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(progression $progression)
+    public function show($id)
     {
-        //
-    }
+     $progression = $this->ProgressionCheck($id);
+    return new ProgresssionResource($progression);
+}
+
+    
 
     /**
      * Show the form for editing the specified resource.
@@ -76,16 +79,50 @@ class ProgressionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, progression $progression)
+    public function update(Request $request, $id)
     {
-        //
+        $progression = $this->ProgressionCheck($id);
+
+        $progression->update($request->all());
+
+        return new ProgresssionResource($progression);
     }
+
+    public function Termine($id)
+    {
+        $progression = $this->ProgressionCheck($id);
+
+        $progression->update([
+            'status' => 'terminé',
+        ]);
+        return $this->success([
+            'message' => 'completed',
+            'progression' => new ProgresssionResource($progression),
+        ]);
+    }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(progression $progression)
+    public function destroy($id)
     {
-        //
+        $progression = $this->ProgressionCheck($id);
+        $progression->delete();
+        return $this->success([
+            'message' => 'Progression deleted successfully',
+        ]);
+    }
+
+    private function ProgressionCheck($id){
+
+        $progression = progression::find($id);
+        if (!$progression) {
+            return $this->error('', 'Progression not found', 404);
+        }
+        if(Auth::user()->id !== $progression->userId){
+            return $this->error('', 'Unauthorized', 403);
+        }   
+        return $progression;
     }
 }
