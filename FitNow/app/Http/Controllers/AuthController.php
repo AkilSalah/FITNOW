@@ -9,10 +9,11 @@ use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
 
 class AuthController extends Controller
 {
-    use HttpResponses;
+    use HasApiTokens , HttpResponses;
 
     public function login(LoginRequest $request)
     {
@@ -49,8 +50,15 @@ class AuthController extends Controller
     }
     
     
-    public function logout(){
-        return response()->json('this is my logout method');
+    public function logout(Request $request){
+
+        if (Auth::check()) {
+            Auth::user()->currentAccessToken()->delete();
+        }
+            return $this->success([
+            'message' => 'Logout Successfully',
+        ]);
+
     }
 
 }

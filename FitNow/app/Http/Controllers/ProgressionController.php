@@ -17,11 +17,11 @@ class ProgressionController extends Controller
      */
     public function index()
     {
-        return 
-            ProgresssionResource::collection(
+        return $this->success([
+            'progressions' => ProgresssionResource::collection(
                 progression::where('userId', '=', Auth::user()->id)->orderBy('created_at' , 'desc')->get()
-            );
-        
+            ),
+        ]);
     }
 
     /**
@@ -62,8 +62,14 @@ class ProgressionController extends Controller
      */
     public function show($id)
     {
-     $progression = $this->ProgressionCheck($id);
-    return new ProgresssionResource($progression);
+        $progression = progression::find($id);
+        if (!$progression) {
+            return $this->error('', 'Progression not found', 404);
+        }
+        if(Auth::user()->id !== $progression->userId){
+            return $this->error('', 'Unauthorized', 403);
+        }   
+        return new ProgresssionResource($progression);
 }
 
     
@@ -81,7 +87,13 @@ class ProgressionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $progression = $this->ProgressionCheck($id);
+        $progression = progression::find($id);
+        if (!$progression) {
+            return $this->error('', 'Progression not found', 404);
+        }
+        if(Auth::user()->id !== $progression->userId){
+            return $this->error('', 'Unauthorized', 403);
+        }   
 
         $progression->update($request->all());
 
@@ -90,11 +102,18 @@ class ProgressionController extends Controller
 
     public function Termine($id)
     {
-        $progression = $this->ProgressionCheck($id);
+        $progression = progression::find($id);
+        if (!$progression) {
+            return $this->error('', 'Progression not found', 404);
+        }
+        if(Auth::user()->id !== $progression->userId){
+            return $this->error('', 'Unauthorized', 403);
+        }   
 
         $progression->update([
             'status' => 'terminé',
         ]);
+
         return $this->success([
             'message' => 'completed',
             'progression' => new ProgresssionResource($progression),
@@ -107,15 +126,6 @@ class ProgressionController extends Controller
      */
     public function destroy($id)
     {
-        $progression = $this->ProgressionCheck($id);
-        $progression->delete();
-        return $this->success([
-            'message' => 'Progression deleted successfully',
-        ]);
-    }
-
-    private function ProgressionCheck($id){
-
         $progression = progression::find($id);
         if (!$progression) {
             return $this->error('', 'Progression not found', 404);
@@ -123,6 +133,21 @@ class ProgressionController extends Controller
         if(Auth::user()->id !== $progression->userId){
             return $this->error('', 'Unauthorized', 403);
         }   
-        return $progression;
+        $progression->delete();
+        return $this->success([
+            'message' => 'Progression deleted successfully',
+        ]);
     }
+
+    // private function ProgressionCheck($id){
+
+    //     $progression = progression::find($id);
+    //     if (!$progression) {
+    //         return $this->error('', 'Progression not found', 404);
+    //     }
+    //     if(Auth::user()->id !== $progression->userId){
+    //         return $this->error('', 'Unauthorized', 403);
+    //     }   
+    //     return $progression;
+    // }
 }

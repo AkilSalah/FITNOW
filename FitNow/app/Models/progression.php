@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class progression extends Model
+class Progression extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'userId',
         'poids',
@@ -22,6 +23,6 @@ class progression extends Model
 
     public function user()
     {
-    return $this->belongsTo(User::class, 'userId');
+        return $this->belongsTo(User::class, 'userId');
     }
 }

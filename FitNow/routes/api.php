@@ -29,7 +29,7 @@ Route::post('/register',[AuthController::class,'register']);
 
 // protected
 Route::group(['middleware' => ['auth:sanctum']],function(){
-Route::post('/logout',[AuthController::class,'logout']);
+Route::get('/logout',[AuthController::class,'logout']);
 Route::resource('/Progression', ProgressionController::class);
 Route::patch('/Progression/{id}/completed',[ProgressionController::class,'Termine']);
 });
