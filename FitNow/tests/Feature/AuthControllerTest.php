@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use laravel\Sanctum\Sanctum;
 
 class AuthControllerTest extends TestCase
 {
@@ -62,18 +63,26 @@ class AuthControllerTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function testLogout(){
-        $user = User::factory()->create([
-            'email' => 'akil@example.com',
-            'password' => bcrypt('password'),
-        ]);
-        $credentials = [
-            'email' => 'akil@example.com',
-            'password' => 'password',
-        ];
-        $response = $this->postJson('/api/login',$credentials);
-        
+    public function testLogout()
+{
+    $user = User::factory()->create();
+    $token = $user->createToken('token')->plainTextToken;
 
-    }
+    $response = $this->withHeaders([
+        'Authorization' => 'Bearer ' . $token,
+    ])->getJson('/api/logout');
+
+    $response->assertStatus(200)
+        ->assertJson([
+            "status" => "Request was succesful.",
+            "message" => Null,
+            "data" => [
+                "message" => "Logout Successfully"
+            ],
+        ]);
+}
+
+    
+
 
 }
