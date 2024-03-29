@@ -48,6 +48,7 @@ class ProgressionController extends Controller
             'Hauteur' => $validation['Hauteur'],
             'PoidsLeve' => $validation['PoidsLeve'],
             'TempsDeCourse' => $validation['TempsDeCourse'],
+            'status' => 'NonTerminé',
         ]);
         return $this->success([
             'message' => 'Success',
